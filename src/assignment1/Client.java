@@ -234,7 +234,7 @@ public class Client extends Thread {
     	}
     	long clientEndTime = System.currentTimeMillis();
     	
-    	System.out.print(sendOrReceive + " Operation Time: " + String.valueOf(clientEndTime - clientStartTime) + "ms");
+    	System.out.print("\n" + sendOrReceive + " Operation Time: " + String.valueOf(clientEndTime - clientStartTime) + "ms");
     	
     	objNetwork.disconnect(objNetwork.getClientIP());
     }
