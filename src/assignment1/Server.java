@@ -17,7 +17,7 @@ import java.util.InputMismatchException;
  * @author Kerly Titus
  */
 
-public class Server {
+public class Server extends Thread {
   
 	int numberOfTransactions;         /* Number of transactions handled by the server */
 	int numberOfAccounts;             /* Number of accounts stored in the server */
@@ -194,8 +194,11 @@ public class Server {
          /* Process the accounts until the client disconnects */
          while ((!objNetwork.getClientConnectionStatus().equals("disconnected")))
          { 
-        	 /* while( (objNetwork.getInBufferStatus().equals("empty"))); */  /* Alternatively, busy-wait until the network input buffer is available */
-        	 
+        	 /* Alternatively, busy-wait until the network input buffer is available */
+        	 while( (objNetwork.getInBufferStatus().equals("empty")))
+        	 {
+        		 Thread.yield();
+        	 }
         	 if (!objNetwork.getInBufferStatus().equals("empty"))
         	 {
         		 System.out.println("\n DEBUG : Server.processTransactions() - transferring in account " + trans.getAccountNumber());
@@ -232,8 +235,12 @@ public class Server {
                             
                             System.out.println("\n DEBUG : Server.processTransactions() - Obtaining balance from account" + trans.getAccountNumber());
         				 } 
-        		        		 
-        		 // while( (objNetwork.getOutBufferStatus().equals("full"))); /* Alternatively,  busy-wait until the network output buffer is available */
+        		 /* Alternatively,  busy-wait until the network output buffer is available */ 		 
+        		 while( (objNetwork.getOutBufferStatus().equals("full")))
+        		 {
+        			 Thread.yield();
+        		 }
+        		 
                                                            
         		 System.out.println("\n DEBUG : Server.processTransactions() - transferring out account " + trans.getAccountNumber());
         		 
@@ -313,11 +320,11 @@ public class Server {
     	long serverStartTime, serverEndTime;
 
     	System.out.println("\n DEBUG : Server.run() - starting server thread " + objNetwork.getServerConnectionStatus());
-    	
     	/* Implement the code for the run method */
-        
+    	serverStartTime =  System.currentTimeMillis();
+    	processTransactions(trans);
+    	serverEndTime =  System.currentTimeMillis();
         System.out.println("\n Terminating server thread - " + " Running time " + (serverEndTime - serverStartTime) + " milliseconds");
-           
     }
 }
 
