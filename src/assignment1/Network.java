@@ -560,6 +560,7 @@ public class Network extends Thread {
         /* Implement the code for the run method */
             if (clientConnectionStatus.equals("disconnected") && serverConnectionStatus.equals("disconnected"))
             {
+            	this.setNetworkStatus("inactive");
                 break;
             }
             
