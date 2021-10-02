@@ -185,7 +185,7 @@ public class Client extends Thread {
          
          while (i < getNumberOfTransactions())
          {     
-       		while (objNetwork.getOutBufferStatus() == "empty" && objNetwork.getClientConnectionStatus().equals("connected")) {
+       		while (objNetwork.getOutBufferStatus().equals("empty") && objNetwork.getClientConnectionStatus().equals("connected")) {
      			Thread.yield();
      		}
        		
@@ -232,8 +232,8 @@ public class Client extends Thread {
     		System.out.print("Error in client operation");
     	}
     	long clientEndTime = System.currentTimeMillis();
-    	
-    	objNetwork.disconnect(objNetwork.getClientIP());
     	System.out.print("\nTerminating client " + sendOrReceive + " thread - Running Time " + String.valueOf(clientEndTime - clientStartTime) + "milliseconds");
+
+    	objNetwork.disconnect(objNetwork.getClientIP());
     }
 }
