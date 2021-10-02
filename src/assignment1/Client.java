@@ -215,21 +215,27 @@ public class Client extends Thread {
     	String sendOrReceive = null;
     	
     	long clientStartTime = System.currentTimeMillis();
-    	switch (this.clientOperation) {
-	    	case "sending":
-	    		sendOrReceive = "Client Send";
-	    		this.sendTransactions();
-	    		break;
-	    	case "receiving":
-	    		sendOrReceive = "Client Receive";
-	    		this.receiveTransactions(transact);
-	    		break;
-	    	default: System.out.print("Error in client operation");
+    	if (this.clientOperation.equals("sending")) {
+    		while (objNetwork.getInBufferStatus() == "full") {
+    			Thread.yield();
+    		}
+    		sendOrReceive = "Client Send";
+    		this.sendTransactions();
+    	}
+    	else if (this.clientOperation.equals("receiving")) {
+    		while (objNetwork.getOutBufferStatus() == "empty") {
+    			Thread.yield();
+    		}
+    		sendOrReceive = "Client Receive";
+    		this.receiveTransactions(transact);
+    	}
+    	else {
+    		System.out.print("Error in client operation");
     	}
     	long clientEndTime = System.currentTimeMillis();
     	
-    	System.out.println(sendOrReceive + " Operation Time: " + String.valueOf(clientEndTime - clientStartTime));
-    
-	/* Implement the code for the run method */
+    	System.out.print(sendOrReceive + " Operation Time: " + String.valueOf(clientEndTime - clientStartTime) + "ms");
+    	
+    	objNetwork.disconnect(objNetwork.getClientIP());
     }
 }

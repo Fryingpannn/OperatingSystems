@@ -10,7 +10,7 @@ package assignment1;
  *
  * @author Kerly Titus
  */
-public class Network {
+public class Network extends Thread {
     
     private static int maxNbPackets;                           /* Maximum number of simultaneous transactions handled by the network buffer */
     private static int inputIndexClient, inputIndexServer, outputIndexServer, outputIndexClient;                   /* Network buffer indices for accessing the input buffer (inputIndexClient, outputIndexServer) and output buffer (inputIndexServer, outputIndexClient) */
@@ -556,8 +556,15 @@ public class Network {
     	System.out.println("\n DEBUG : Network.run() - starting network thread");
     	
     	while (true)
-    	{
-		/* Implement the code for the run method */
-    	}    
+        {
+        /* Implement the code for the run method */
+            if (clientConnectionStatus.equals("disconnected") && serverConnectionStatus.equals("disconnected"))
+            {
+                break;
+            }
+            
+            Thread.yield();
+        }  
+        System.out.println("\n Terminating network thread - " + " Client " + clientConnectionStatus + " Server " + serverConnectionStatus); 
     }
 }
