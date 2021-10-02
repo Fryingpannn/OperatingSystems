@@ -16,7 +16,7 @@ import java.util.InputMismatchException;
  * @author Kerly Titus
  */
 
-public class Client { 
+public class Client extends Thread { 
     
     private static int numberOfTransactions;   		/* Number of transactions to process */
     private static int maxNbTransactions;      		/* Maximum number of transactions */
@@ -212,7 +212,23 @@ public class Client {
     public void run()
     {   
     	Transactions transact = new Transactions();
-    	long sendClientStartTime, sendClientEndTime, receiveClientStartTime, receiveClientEndTime;
+    	String sendOrReceive = null;
+    	
+    	long clientStartTime = System.currentTimeMillis();
+    	switch (this.clientOperation) {
+	    	case "sending":
+	    		sendOrReceive = "Client Send";
+	    		this.sendTransactions();
+	    		break;
+	    	case "receiving":
+	    		sendOrReceive = "Client Receive";
+	    		this.receiveTransactions(transact);
+	    		break;
+	    	default: System.out.print("Error in client operation");
+    	}
+    	long clientEndTime = System.currentTimeMillis();
+    	
+    	System.out.println(sendOrReceive + " Operation Time: " + String.valueOf(clientEndTime - clientStartTime));
     
 	/* Implement the code for the run method */
     }
