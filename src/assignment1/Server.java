@@ -197,6 +197,9 @@ public class Server extends Thread {
         	 /* Alternatively, busy-wait until the network input buffer is available */
         	 while( (objNetwork.getInBufferStatus().equals("empty")))
         	 {
+        		 if(objNetwork.getClientConnectionStatus().equals("disconnected")) {
+                     break;
+                 }
         		 Thread.yield();
         	 }
         	 if (!objNetwork.getInBufferStatus().equals("empty"))
@@ -324,7 +327,7 @@ public class Server extends Thread {
     	serverStartTime =  System.currentTimeMillis();
     	processTransactions(trans);
     	serverEndTime =  System.currentTimeMillis();
-        System.out.println("\n Terminating server thread - " + " Running time " + (serverEndTime - serverStartTime) + " milliseconds");
+        System.out.println("\nTerminating server thread - " + " Running time " + (serverEndTime - serverStartTime) + " milliseconds");
         objNetwork.disconnect(objNetwork.getServerIP());
     }
 }

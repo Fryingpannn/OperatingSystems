@@ -227,6 +227,7 @@ public class Client extends Thread {
     	else if (this.clientOperation.equals("receiving")) {
     		sendOrReceive = "receive";
     		this.receiveTransactions(transact);
+    		objNetwork.disconnect(objNetwork.getClientIP());
     	}
     	else {
     		System.out.print("Error in client operation");
@@ -234,6 +235,6 @@ public class Client extends Thread {
     	long clientEndTime = System.currentTimeMillis();
     	System.out.print("\nTerminating client " + sendOrReceive + " thread - Running Time " + String.valueOf(clientEndTime - clientStartTime) + "milliseconds");
 
-    	objNetwork.disconnect(objNetwork.getClientIP());
+    	
     }
 }
