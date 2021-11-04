@@ -1,2 +1,0 @@
-# OperatingSystems
-Comp 346

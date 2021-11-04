@@ -1,0 +1,1 @@
+We used synchronized statements because it gives us the freedom to choose an arbitrary lock. Then, we used the account that is being changed as the lock to make sure that a deposit() and a withdraw() can't modify the same account at the same time (otherwise it would create an inconsistency in the account balance).
