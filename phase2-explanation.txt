@@ -1,0 +1,9 @@
+We used 4 semaphores: inSem, inSem2, outSem and outSem2.
+
+inSem is initialized to the buffer size. This semaphore is acquired in the 'send' function and prevents transactions from being sent to the network if the inComingPacket buffer is full. inSem is released in the 'transferIn' function where a transaction is sent to server from network.
+
+inSem 2 is initialized to 0. This semaphore is acquired in the 'transferIn' function and prevents the server from transferring in transactions if the buffer is empty. inSem2 is released in the 'send' function every time a new transaction enters the buffer.
+
+outSem is initialized to 0. This semaphore is acquired in the 'receive' function to prevent client from receiving transactions if the buffer is empty. outSem is released in 'transferOut' function which indicates that a new transaction is ready to be received.
+
+outSem2 is initialized to 10. This semaphore is acquire in the 'transferOut' function which prevents transactions from entering the network's outGoingPacket buffer if it's full. outSem2 is released in 'receive' function which indicates a transaction has been taken out of the output buffer and there's one more space.

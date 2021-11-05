@@ -270,12 +270,8 @@ public class Server extends Thread {
          /* System.out.println("\n DEBUG : Server.processTransactions() " + getServerThreadId() ); */
          
          /* Process the accounts until the client disconnects */
-         while (true)
+         while (!Network.getClientConnectionStatus().equals("disconnected"))
          {
-        	 System.out.println(Network.getClientConnectionStatus() + "------------------------------------------------------------");
-        	 if(Network.getClientConnectionStatus().equals("disconnected")){
-        		 break;
-        	 }
 //        	 while ( (Network.getInBufferStatus().equals("empty") && !Network.getClientConnectionStatus().equals("disconnected")) ) 
 //        	 { 
 //        		 Thread.yield(); 	/* Yield the cpu if the network input buffer is empty */
