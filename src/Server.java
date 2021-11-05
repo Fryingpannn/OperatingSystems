@@ -280,7 +280,10 @@ public class Server extends Thread {
 //        	 if (!Network.getInBufferStatus().equals("empty"))
 //        	 { 
         		 /* System.out.println("\n DEBUG : Server.processTransactions() - transferring in account " + trans.getAccountNumber()); */
-        		 
+//        	 	if (getNumberOfTransactions() == 71) {
+//        	 		break;
+//        	 	}
+        	 
         		 Network.transferIn(trans);                              /* Transfer a transaction from the network input buffer */
              
         		 accIndex = findAccount(trans.getAccountNumber());
@@ -379,7 +382,11 @@ public class Server extends Thread {
         return account[i].getBalance ();                /* Return updated account balance */
 	 }
      }
-
+     
+     public long calculateTime(long start, long end) {
+    	 Network.inSem2.release();
+    	 return start - end;
+     }
     /**
      *  Processing of a query operation in an account
      * 
@@ -423,10 +430,10 @@ public class Server extends Thread {
          serverStartTime = System.currentTimeMillis();
 
          processTransactions(trans);
-
+         
          serverEndTime = System.currentTimeMillis();
 
-         System.out.println("\n Terminating server thread - " +serverThreadId+ " Running time " + (serverEndTime - serverStartTime) + " milliseconds");
+         System.out.println("\n Terminating server thread - " +serverThreadId+ " Running time " + calculateTime(serverStartTime, serverEndTime) + " milliseconds");
 
          if(getServerThreadId().equals("Thread1"))
          {

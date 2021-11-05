@@ -168,7 +168,6 @@ public class Client extends Thread {
             Network.send(transaction[i]);                            /* Transmit current transaction */
             i++;          
          }
-         
     }
          
  	/** 
@@ -195,7 +194,8 @@ public class Client extends Thread {
             
             System.out.println(transact);                               /* Display updated transaction */    
             i++;
-         } 
+         }
+         Network.inSem2.release();
     }
      
     /** 

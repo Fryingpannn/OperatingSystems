@@ -14,9 +14,9 @@ import java.util.concurrent.*;
 public class Network extends Thread {
     
 	private static Semaphore inSem;
-	private static Semaphore inSem2;
+    public static Semaphore inSem2;
 	private static Semaphore outSem;
-	private static Semaphore outSem2;
+	public static Semaphore outSem2;
     private static int maxNbPackets;                           /* Maximum number of simultaneous transactions handled by the network buffer */
     private static int inputIndexClient, inputIndexServer, outputIndexServer, outputIndexClient; /* Network buffer indices for accessing the input buffer (inputIndexClient, outputIndexServer) and output buffer (inputIndexServer, outputIndexClient) */
     private static String clientIP;                            /* IP number of the client application*/
