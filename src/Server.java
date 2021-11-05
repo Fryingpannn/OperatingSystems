@@ -270,15 +270,19 @@ public class Server extends Thread {
          /* System.out.println("\n DEBUG : Server.processTransactions() " + getServerThreadId() ); */
          
          /* Process the accounts until the client disconnects */
-         while ((!Network.getClientConnectionStatus().equals("disconnected")))
+         while (true)
          {
-        	 while ( (Network.getInBufferStatus().equals("empty") && !Network.getClientConnectionStatus().equals("disconnected")) ) 
-        	 { 
-        		 Thread.yield(); 	/* Yield the cpu if the network input buffer is empty */
+        	 System.out.println(Network.getClientConnectionStatus() + "------------------------------------------------------------");
+        	 if(Network.getClientConnectionStatus().equals("disconnected")){
+        		 break;
         	 }
+//        	 while ( (Network.getInBufferStatus().equals("empty") && !Network.getClientConnectionStatus().equals("disconnected")) ) 
+//        	 { 
+//        		 Thread.yield(); 	/* Yield the cpu if the network input buffer is empty */
+//        	 }
         	 
-        	 if (!Network.getInBufferStatus().equals("empty"))
-        	 { 
+//        	 if (!Network.getInBufferStatus().equals("empty"))
+//        	 { 
         		 /* System.out.println("\n DEBUG : Server.processTransactions() - transferring in account " + trans.getAccountNumber()); */
         		 
         		 Network.transferIn(trans);                              /* Transfer a transaction from the network input buffer */
@@ -315,16 +319,15 @@ public class Server extends Thread {
 					} 
 
             	
-        		 while (Network.getOutBufferStatus().equals("full")) 
-        		 { 
-        			 Thread.yield();		/* Yield the cpu if the network output buffer is full */
-        		 }
+//        		 while (Network.getOutBufferStatus().equals("full")) 
+//        		 { 
+//        			 Thread.yield();		/* Yield the cpu if the network output buffer is full */
+//        		 }
         		
         		 /* System.out.println("\n DEBUG : Server.processTransactions() - transferring out account " + trans.getAccountNumber()); */
         		 
         		 Network.transferOut(trans);                            		/* Transfer a completed transaction from the server to the network output buffer */
         		 setNumberOfTransactions( (getNumberOfTransactions() +  1) ); 	/* Count the number of transactions processed */
-        	 }
          }
          
          /* System.out.println("\n DEBUG : Server.processTransactions() - " + getNumberOfTransactions() + " accounts updated"); */

@@ -13,6 +13,10 @@ import java.util.concurrent.*;
  */
 public class Network extends Thread {
     
+	private static Semaphore inSem;
+	private static Semaphore inSem2;
+	private static Semaphore outSem;
+	private static Semaphore outSem2;
     private static int maxNbPackets;                           /* Maximum number of simultaneous transactions handled by the network buffer */
     private static int inputIndexClient, inputIndexServer, outputIndexServer, outputIndexClient; /* Network buffer indices for accessing the input buffer (inputIndexClient, outputIndexServer) and output buffer (inputIndexServer, outputIndexClient) */
     private static String clientIP;                            /* IP number of the client application*/
@@ -32,7 +36,7 @@ public class Network extends Thread {
      * @param
      */
      Network( )
-      { 
+      {  
     	 int i;  
         
          System.out.println("\n Activating the network ...");
@@ -42,6 +46,11 @@ public class Network extends Thread {
          serverConnectionStatus = "idle";
          portID = 0;
          maxNbPackets = 10;
+         // semaphore set to size of buffer
+    	 inSem = new Semaphore(maxNbPackets);
+    	 inSem2 = new Semaphore(0);
+    	 outSem = new Semaphore(0);
+    	 outSem2 = new Semaphore(maxNbPackets);
          inComingPacket = new Transactions[maxNbPackets];
          outGoingPacket = new Transactions[maxNbPackets];
          for (i=0; i < maxNbPackets; i++)
@@ -353,7 +362,10 @@ public class Network extends Thread {
      */
         public static boolean send(Transactions inPacket)
         {
-        	
+        	try {
+        		  // semaphore released in transferIn
+        		  inSem.acquire();
+
         		  inComingPacket[inputIndexClient].setAccountNumber(inPacket.getAccountNumber());
         		  inComingPacket[inputIndexClient].setOperationType(inPacket.getOperationType());
         		  inComingPacket[inputIndexClient].setTransactionAmount(inPacket.getTransactionAmount());
@@ -376,8 +388,15 @@ public class Network extends Thread {
         		  {
         			  setInBufferStatus("normal");
         		  }
-            
-            return true;
+        		  
+        		  // acquired in transferIn: allow server to transfer in transactions
+        		  inSem2.release();
+        		  return true;
+        	}
+        	catch (InterruptedException e) {
+        		System.out.println("InComingPacket semaphore acquire failure.");
+        	}
+        	return false;
         }   
          
       /** Transmitting the transactions from the server to the client through the network 
@@ -387,7 +406,9 @@ public class Network extends Thread {
      */
          public static boolean receive(Transactions outPacket)
         {
-
+        	 try {
+        		 // semaphore released in transferOut
+        	 	 outSem.acquire();
         		 outPacket.setAccountNumber(outGoingPacket[outputIndexClient].getAccountNumber());
         		 outPacket.setOperationType(outGoingPacket[outputIndexClient].getOperationType());
         		 outPacket.setTransactionAmount(outGoingPacket[outputIndexClient].getTransactionAmount());
@@ -410,8 +431,15 @@ public class Network extends Thread {
         		 {
         			 setOutBufferStatus("normal"); 
         		 }
-        	            
+        		 
+             // semaphore acquired in transferOut to prevent output buffer full
+        	 outSem2.release();
              return true;
+        	 }
+        	 catch (InterruptedException e) {
+        		 System.out.println("Receive semaphore acquire failure.");
+        	 }
+        	 return false;
         }   
          
     
@@ -424,7 +452,9 @@ public class Network extends Thread {
      */
          public static boolean transferOut(Transactions outPacket)
         {
-	   	
+        	 try {
+        		 // semaphore released in receive; prevents output buffer full
+        		outSem2.acquire();
         		outGoingPacket[inputIndexServer].setAccountNumber(outPacket.getAccountNumber());
         		outGoingPacket[inputIndexServer].setOperationType(outPacket.getOperationType());
         		outGoingPacket[inputIndexServer].setTransactionAmount(outPacket.getTransactionAmount());
@@ -447,8 +477,15 @@ public class Network extends Thread {
         		{
         			setOutBufferStatus("normal");
         		}
-        	            
+        		
+        	// semaphore acquired in receive()
+        	 outSem.release();
              return true;
+        	 }
+        	 catch (InterruptedException e) {
+        		 System.out.println("Transfer out semaphore failure.");
+        	 }
+        	 return false;
         }   
          
     /**
@@ -459,7 +496,9 @@ public class Network extends Thread {
      */
        public static boolean transferIn(Transactions inPacket)
         {
-	
+    	   try {
+    		   	 // released in send()
+    		   	 inSem2.acquire();
     		     inPacket.setAccountNumber(inComingPacket[outputIndexServer].getAccountNumber());
     		     inPacket.setOperationType(inComingPacket[outputIndexServer].getOperationType());
     		     inPacket.setTransactionAmount(inComingPacket[outputIndexServer].getTransactionAmount());
@@ -483,7 +522,14 @@ public class Network extends Thread {
     		    	 setInBufferStatus("normal");
     		     }
             
+    		 // release semaphore: transaction has been transferred from network to server, opens up space for more inputs
+    		 inSem.release();
              return true;
+    	   }
+    	   catch (InterruptedException e) {
+    		   System.out.println("Transfer in semaphore failure.");
+    	   }
+    	   return false;
         }   
          
      /**
