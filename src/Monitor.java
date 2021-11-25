@@ -14,7 +14,7 @@ public class Monitor
 	 */
 	
 	//all possible states of a philosopher
-	enum PhilosopherStates {TALKING, THINKING, HUNGRY, EATING};
+	enum PhilosopherStates {THINKING, HUNGRY, EATING};
 	
 	int numOfPhilosophers;
 	//state of each philosopher
