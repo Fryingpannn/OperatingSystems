@@ -1,2 +1,3 @@
 # OperatingSystems
-Comp 346
+
+Programs on synchronization, multithreading, monitors, semaphores, etc.
