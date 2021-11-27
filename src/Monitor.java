@@ -73,7 +73,11 @@ public class Monitor {
 
 		// busy wait until it is the philosopher's turn to eat
 		while (true) {
-
+			// if there's only 1 philosopher
+			if (stateOfPhilosophers.length == 1) {
+				WaitToEat.remove(piTID);
+				return;
+			}
 			// allow the philosopher to eat only when the left and right philosophers aren't
 			// eating
 			// make sure the philosopher is not sitting on the left or right of first
