@@ -89,24 +89,22 @@ public class Philosopher extends BaseThread
 	{
 		for(int i = 0; i < DiningPhilosophers.DINING_STEPS; i++)
 		{
+			// Philosopher tries to eat
 			DiningPhilosophers.soMonitor.pickUp(getTID());
-
+			
+			// Philosopher eats
 			eat();
 
+			// Philosopher finishes eating and goes back to thinking
 			DiningPhilosophers.soMonitor.putDown(getTID());
 
 			think();
 
-			/*
-			 * TODO:
-			 * A decision is made at random whether this particular
-			 * philosopher is about to say something terribly useful.
-			 */
-			if(true == false)
-			{
-				// Some monitor ops down here...
+			// Philosopher talks if random integer is even.
+			if(((int) Math.random() * 99) % 2 == 0) {
+				DiningPhilosophers.soMonitor.requestTalk(getTID());
 				talk();
-				// ...
+				DiningPhilosophers.soMonitor.endTalk();
 			}
 
 			yield();
