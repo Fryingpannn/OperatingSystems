@@ -1,8 +1,9 @@
+import java.util.Scanner;
+
 /**
  * Class DiningPhilosophers
  * The main starter.
  *
- * @author Serguei A. Mokhov, mokhov@cs.concordia.ca
  */
 public class DiningPhilosophers
 {
@@ -41,12 +42,24 @@ public class DiningPhilosophers
 	{
 		try
 		{
-			/*
-			 * TODO:
-			 * Should be settable from the command line
-			 * or the default if no arguments supplied.
-			 */
+			// Ask user for input number of philosophers. Use default if error input.
 			int iPhilosophers = DEFAULT_NUMBER_OF_PHILOSOPHERS;
+			Scanner in = new Scanner(System.in);
+			System.out.print("Enter number of philosophers: ");
+			String input = in.nextLine();
+			try {
+				int temp = Integer.parseInt(input);
+				if (temp < 0) {
+					throw new NumberFormatException();
+				}
+				iPhilosophers = temp;
+			}
+			catch (NumberFormatException e) {
+				System.out.println("\"" + input + "\" is not a positive decimal integer. Using default: " + DEFAULT_NUMBER_OF_PHILOSOPHERS);
+			}
+			finally {
+				in.close();
+			}
 
 			// Make the monitor aware of how many philosophers there are
 			soMonitor = new Monitor(iPhilosophers);
